@@ -335,3 +335,111 @@ print(
     f"The p-value of {p_val:.4f} is below 0.05, meaning this difference is very "
     f"unlikely to be due to chance."
 )
+
+# =============================================================================
+# --- Correlation ---
+# =============================================================================
+
+# Correlation Q1
+# np.corrcoef returns a 2x2 matrix: [0,0] and [1,1] are self-correlations (always 1.0),
+# [0,1] and [1,0] are the actual correlation between x and y.
+# y = 2x is a perfect linear relationship, so we expect correlation = 1.0
+print("\n=== Correlation Q1 ===")
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
+
+corr = np.corrcoef(x, y)
+print("Correlation matrix:\n", corr)
+print("Coefficient:", corr[0, 1])
+# Expected: 1.0 — y is exactly 2*x, a perfect positive linear relationship.
+# The result is 0.9999... instead of exactly 1.0 due to floating-point arithmetic:
+# computers represent decimals approximately, so tiny rounding errors accumulate.
+
+# Correlation Q2
+# pearsonr returns (correlation_coefficient, p_value)
+# p-value tells us whether the correlation is statistically significant
+print("\n=== Correlation Q2 ===")
+x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+y = [10, 9, 7, 8, 6, 5, 3, 4, 2, 1]
+
+r, p = pearsonr(x, y)
+print(f"Pearson r: {r:.4f}")
+print(f"p-value:   {p:.4f}")
+# r ≈ -0.976: strong negative correlation — as x increases, y decreases almost perfectly.
+# Not exactly -1.0 because y has slight noise (e.g. 7 and 8 are swapped around x=3,4).
+
+# Correlation Q3
+# df.corr() computes pairwise Pearson correlation for all numeric columns
+# values range from -1 (perfect negative) to +1 (perfect positive)
+print("\n=== Correlation Q3 ===")
+people = {
+    "height": [160, 165, 170, 175, 180],
+    "weight": [55, 60, 65, 72, 80],
+    "age":    [25, 30, 22, 35, 28]
+}
+df_corr = pd.DataFrame(people)
+print("Correlation matrix:\n", df_corr.corr())
+
+# Correlation Q4
+# plt.figure() starts a fresh canvas so this plot doesn't overlap the previous one
+print("\n=== Correlation Q4 ===")
+x = [10, 20, 30, 40, 50]
+y = [90, 75, 60, 45, 30]
+
+plt.figure()
+plt.scatter(x, y)
+plt.title("Negative Correlation")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.show()
+
+# Correlation Q5
+# sns.heatmap visualizes a matrix as a color grid
+# annot=True overlays the numeric values on each cell
+print("\n=== Correlation Q5 ===")
+plt.figure()
+sns.heatmap(df_corr.corr(), annot=True)
+plt.title("Correlation Heatmap")
+plt.show()
+
+
+# =============================================================================
+# --- Pipelines ---
+# =============================================================================
+
+# Pipeline Q1
+# A pipeline is a chain of functions where each step transforms the data
+# and passes the result to the next step — no special framework needed.
+
+def create_series(arr):
+    # Convert a NumPy array into a named pandas Series
+    return pd.Series(arr, name="values")
+
+def clean_data(series):
+    # Remove NaN values so they don't affect statistical calculations
+    return series.dropna()
+
+def summarize_data(series):
+    # Compute summary statistics and return them as a dictionary
+    # series.mode()[0] gets the first (most common) mode value
+    return {
+        "mean":   series.mean(),
+        "median": series.median(),
+        "std":    series.std(),
+        "mode":   series.mode()[0]
+    }
+
+def data_pipeline(arr):
+    # Orchestrates the three steps: load → clean → summarize
+    s = create_series(arr)
+    s_clean = clean_data(s)
+    return summarize_data(s_clean)
+
+print("\n=== Pipeline Q1 ===")
+arr = np.array([12.0, 15.0, np.nan, 14.0, 10.0, np.nan, 18.0, 14.0, 16.0, 22.0, np.nan, 13.0])
+
+result = data_pipeline(arr)
+
+print("Pipeline results:")
+for k, v in result.items():
+    print(f"  {k}: {v}")
