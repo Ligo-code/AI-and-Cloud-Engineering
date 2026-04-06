@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from scipy.stats import pearsonr
 import seaborn as sns
+from statistics import mode
 
 # =============================================================================
 # --- Pandas ---
@@ -201,3 +202,75 @@ ax[1].set_title("Bar Plot")
 plt.tight_layout()
 plt.show()
 
+# =============================================================================
+# --- Descriptive Stats ---
+# =============================================================================
+
+# Descriptive Stats Q1
+# np.mean, np.median, np.var, np.std all accept plain Python lists as well as arrays
+# variance measures average squared distance from the mean;
+# std is its square root, expressed in the same units as the original data
+print("\n=== Descriptive Stats Q1 ===")
+data = [12, 15, 14, 10, 18, 22, 13, 16, 14, 15]
+print(f"Mean:     {np.mean(data)}")
+print(f"Median:   {np.median(data)}")
+print(f"Variance: {np.var(data)}")
+print(f"Std:      {np.std(data)}")
+
+# Descriptive Stats Q2
+# plt.figure() ensures the histogram is drawn on a fresh canvas, not on top of a previous plot
+# np.random.seed makes the generated data identical on every run (reproducibility)
+print("\n=== Descriptive Stats Q2 ===")
+np.random.seed(42)
+data = np.random.normal(65, 10, 500)
+plt.figure()
+plt.hist(data, bins=20)
+plt.title("Distribution of Scores")
+plt.xlabel("Value")
+plt.ylabel("Frequency")
+plt.show()
+
+# Descriptive Stats Q3
+# A boxplot shows: median (center line), IQR (box), whiskers, and outliers (dots beyond whiskers)
+# Passing a list of lists draws one box per group
+print("\n=== Descriptive Stats Q3 ===")
+group_a = [55, 60, 63, 70, 68, 62, 58, 65]
+group_b = [75, 80, 78, 90, 85, 79, 82, 88]
+
+plt.figure()
+plt.boxplot([group_a, group_b], labels=["Group A", "Group B"])
+plt.title("Score Comparison")
+plt.show()
+
+# Descriptive Stats Q4
+# The exponential distribution is right-skewed: most values are small,
+# but a long tail of large values pulls the mean upward away from the bulk of the data.
+# For skewed distributions, median is a better measure of central tendency
+# because it is not affected by extreme values the way the mean is.
+# The normal distribution is symmetric, so mean and median are roughly equal —
+# either is an appropriate measure of central tendency.
+print("\n=== Descriptive Stats Q4 ===")
+np.random.seed(42)
+normal_data = np.random.normal(50, 5, 200)
+skewed_data = np.random.exponential(10, 200)
+
+plt.figure()
+plt.boxplot([normal_data, skewed_data], labels=["Normal", "Exponential"])
+plt.title("Distribution Comparison")
+plt.show()
+
+# Descriptive Stats Q5
+# statistics.mode() from the standard library returns the single most common value.
+# mode is the same for both datasets (12 appears twice), but mean differs greatly.
+# Why? The outlier 150 in data2 inflates the mean because the mean sums all values.
+# The median only looks at the middle position, so extreme values do not affect it.
+print("\n=== Descriptive Stats Q5 ===")
+
+data1 = [10, 12, 12, 16, 18]
+data2 = [10, 12, 12, 16, 150]
+
+print("Data1 mean:", np.mean(data1), "median:", np.median(data1), "mode:", mode(data1))
+print("Data2 mean:", np.mean(data2), "median:", np.median(data2), "mode:", mode(data2))
+
+# data2 mean is skewed by the outlier 150 — it pulls the average up to 40,
+# while the median stays at 12, which better represents the typical value
