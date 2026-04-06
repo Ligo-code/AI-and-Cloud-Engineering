@@ -8,6 +8,7 @@ import seaborn as sns
 # =============================================================================
 # --- Pandas ---
 # =============================================================================
+# Note: all Pandas questions (Q1-Q7) share the same DataFrame `df`
 
 # Pandas Q1
 # Create a DataFrame and print basic information about it
@@ -32,7 +33,7 @@ print(df.dtypes)
 # Filter rows: only students who passed AND have grade > 80
 # The & operator combines two boolean conditions element-wise
 print("\n=== Pandas Q2 ===")
-passed_and_high = df[(df["passed"] == True) & (df["grade"] > 80)]
+passed_and_high = df[(df["passed"]) & (df["grade"] > 80)]
 print("Students who passed and have grade > 80:")
 print(passed_and_high)
 
@@ -74,3 +75,64 @@ print("\n=== Pandas Q7 ===")
 top3 = df.sort_values("grade", ascending=False).head(3)
 print("Top 3 students by grade (descending):")
 print(top3)
+
+# =============================================================================
+# --- NumPy ---
+# =============================================================================
+
+# NumPy Q1
+# np.array() creates an array from a Python list
+# shape: dimensions as a tuple, dtype: data type, ndim: number of dimensions
+print("\n=== NumPy Q1 ===")
+arr1d = np.array([10, 20, 30, 40, 50])
+print(f"Array: {arr1d}")
+print(f"Shape: {arr1d.shape}")
+print(f"Dtype: {arr1d.dtype}")
+print(f"Ndim: {arr1d.ndim}")
+
+# NumPy Q2
+# A 2D array is like a matrix: shape gives (rows, cols)
+# size is the total number of elements: rows * cols
+print("\n=== NumPy Q2 ===")
+arr = np.array([[1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9]])
+print(f"Array:\n{arr}")
+print(f"Shape: {arr.shape}")
+print(f"Size (total elements): {arr.size}")
+
+# NumPy Q3
+# Slicing syntax: arr[row_start:row_end, col_start:col_end]
+# :2 means "from index 0 up to (not including) index 2"
+print("\n=== NumPy Q3 ===")
+top_left = arr[:2, :2]
+print(f"Top-left 2x2 block:\n{top_left}")
+
+# NumPy Q4
+# np.zeros() and np.ones() fill arrays with 0s and 1s respectively
+# The argument is a tuple describing the shape: (rows, cols)
+print("\n=== NumPy Q4 ===")
+zeros = np.zeros((3, 4))
+ones = np.ones((2, 5))
+print(f"3x4 array of zeros:\n{zeros}")
+print(f"2x5 array of ones:\n{ones}")
+
+# NumPy Q5
+# np.arange(start, stop, step) — like Python's range() but returns a NumPy array
+# stop is exclusive, so arange(0, 50, 5) gives [0, 5, 10, ..., 45]
+print("\n=== NumPy Q5 ===")
+arange_arr = np.arange(0, 50, 5)
+print(f"Array: {arange_arr}")
+print(f"Shape: {arange_arr.shape}")
+print(f"Mean: {arange_arr.mean()}")
+print(f"Sum: {arange_arr.sum()}")
+print(f"Std: {arange_arr.std()}")
+
+# NumPy Q6
+# np.random.normal(mean, std, size) draws random samples from a normal distribution
+# With enough samples the computed mean and std should be close to the target values
+print("\n=== NumPy Q6 ===")
+np.random.seed(42)
+random_arr = np.random.normal(0, 1, 200)
+print(f"Mean of 200 random normal values: {random_arr.mean():.4f}  (target: 0)")
+print(f"Std  of 200 random normal values: {random_arr.std():.4f}  (target: 1)")
