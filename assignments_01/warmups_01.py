@@ -136,3 +136,68 @@ np.random.seed(42)
 random_arr = np.random.normal(0, 1, 200)
 print(f"Mean of 200 random normal values: {random_arr.mean():.4f}  (target: 0)")
 print(f"Std  of 200 random normal values: {random_arr.std():.4f}  (target: 1)")
+
+
+# =============================================================================
+# --- Matplotlib ---
+# =============================================================================
+
+# Matplotlib Q1
+# plt.figure() starts a new empty figure so plots don't overlap each other
+# plt.plot() draws a line through the given x, y points
+print("\n=== Matplotlib Q1 ===")
+x = [0, 1, 2, 3, 4, 5]
+y = [0, 1, 4, 9, 16, 25]
+
+plt.figure()
+plt.plot(x, y)
+plt.title("Squares")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.show()
+
+# Matplotlib Q2
+# plt.bar() takes category labels and their corresponding heights
+print("\n=== Matplotlib Q2 ===")
+subjects = ["Math", "Science", "English", "History"]
+scores = [88, 92, 75, 83]
+
+plt.figure()
+plt.bar(subjects, scores)
+plt.title("Subject Scores")
+plt.xlabel("Subjects")
+plt.ylabel("Scores")
+plt.show()
+
+# Matplotlib Q3
+# plt.scatter() plots individual points (no connecting line)
+# label= assigns a name to each dataset so plt.legend() can display it
+print("\n=== Matplotlib Q3 ===")
+x1, y1 = [1, 2, 3, 4, 5], [2, 4, 5, 4, 5]
+x2, y2 = [1, 2, 3, 4, 5], [5, 4, 3, 2, 1]
+
+plt.figure()
+plt.scatter(x1, y1, label="Data1")
+plt.scatter(x2, y2, label="Data2")
+plt.legend()
+plt.xlabel("x")
+plt.ylabel("y")
+plt.show()
+
+# Matplotlib Q4
+# plt.subplots(rows, cols) returns a figure and an array of Axes objects
+# ax[0] and ax[1] are the individual subplot panels (left and right)
+# On subplots we use ax.set_title() instead of plt.title()
+# plt.tight_layout() automatically adjusts spacing so subplots don't overlap
+print("\n=== Matplotlib Q4 ===")
+fig, ax = plt.subplots(1, 2)
+
+ax[0].plot(x, y)
+ax[0].set_title("Line Plot")
+
+ax[1].bar(subjects, scores)
+ax[1].set_title("Bar Plot")
+
+plt.tight_layout()
+plt.show()
+
