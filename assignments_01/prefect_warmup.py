@@ -74,3 +74,10 @@ if __name__ == "__main__":
 #   with plain print() statements.
 # - Parameterization: running the same flow with different inputs (different date
 #   ranges, different file paths) without changing the code.
+
+
+'''
+In this example, plain Python is enough because the workflow is very small. But in real projects, 
+Prefect helps manage production pipelines, especially when tasks depend on each other, 
+may fail, or need to run automatically.
+'''
