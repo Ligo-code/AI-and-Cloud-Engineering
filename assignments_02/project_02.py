@@ -344,3 +344,105 @@ for name, coef in zip(feature_cols, model_full.coef_):
 # highlighting that academic performance is influenced by complex,
 # partially unobserved factors not fully captured in this dataset.
 
+# =============================================================================
+# Task 6: Evaluate and Summarize
+# =============================================================================
+
+print("\n=== Task 6: Evaluate and Summarize ===")
+
+# Predicted vs Actual plot for the full model test set.
+# Each dot is one student: x = what the model predicted, y = their real grade.
+# A perfect model would place every point on the diagonal (predicted = actual).
+# Clusters or curves away from the diagonal reveal systematic errors.
+plt.figure()
+plt.scatter(y_pred_f, y_test_f, alpha=0.7, s=40)
+diag_min = min(y_pred_f.min(), y_test_f.min())
+diag_max = max(y_pred_f.max(), y_test_f.max())
+plt.plot([diag_min, diag_max], [diag_min, diag_max], "r--", label="Perfect fit")
+plt.title("Predicted vs Actual (Full Model)")
+plt.xlabel("Predicted G3")
+plt.ylabel("Actual G3")
+plt.legend()
+plt.tight_layout()
+plt.savefig(os.path.join(OUTPUT_DIR, "predicted_vs_actual.png"))
+plt.close()
+print(f"Plot saved: {os.path.join(OUTPUT_DIR, 'predicted_vs_actual.png')}")
+# A point above the diagonal: the model underestimated -- the student did
+# better than predicted (perhaps extra effort not captured in the features).
+# A point below the diagonal: the model overestimated -- the student
+# underperformed relative to their profile.
+# The spread appears fairly uniform across grade levels, with no strong
+# systematic pattern at the high or low end. The absence of a clear pattern
+# suggests that the model is limited by missing features rather than a
+# systematic modeling flaw.
+
+print(f"""
+Plain-language summary:
+  Dataset : {len(df_clean)} students after filtering out {len(df) - len(df_clean)} exam absences
+  Test set: {len(y_test_f)} students (20%)
+  RMSE    : {rmse_full:.2f} on a 0-20 scale -- typical prediction error ~{rmse_full:.1f} grade points
+  R2      : {r2_test:.2f} -- the model explains ~{r2_test*100:.0f}% of variance in final grades
+
+  Largest positive coef: higher     = +{model_full.coef_[feature_cols.index('higher')]:.3f}
+    Students who aspire to higher education score notably better (motivation signal).
+  Largest negative coef: schoolsup  = {model_full.coef_[feature_cols.index('schoolsup')]:.3f}
+    Driven by selection bias -- weaker students receive support, not the reverse.
+
+  Most surprising: schoolsup looks harmful but is not. Classic correlation vs causation.
+  Most of what drives a student's grade is not captured in this dataset.
+""")
+
+print(f"\nSummary stats:")
+print(f"  Dataset size (filtered): {len(df_clean)} students")
+print(f"  Test set size:           {len(y_test_f)} students")
+print(f"  Full model RMSE:         {rmse_full:.4f} (on 0-20 scale)")
+print(f"  Full model R2:           {r2_test:.4f}")
+print(f"  Largest positive coef:   higher     = +{model_full.coef_[feature_cols.index('higher')]:.3f}")
+print(f"  Largest negative coef:   schoolsup  = {model_full.coef_[feature_cols.index('schoolsup')]:.3f}")
+
+# =============================================================================
+# Neglected Feature: The Power of G1
+# =============================================================================
+
+print("\n=== Neglected Feature: Adding G1 ===")
+
+# G1 (first period grade) was deliberately excluded because it is so
+# predictive that it dominates everything else. Adding it now to show why.
+feature_cols_g1 = feature_cols + ["G1"]
+X_g1 = df_clean[feature_cols_g1].values
+y_g1 = df_clean["G3"].values
+
+X_train_g1, X_test_g1, y_train_g1, y_test_g1 = train_test_split(
+    X_g1, y_g1, test_size=0.2, random_state=42
+)
+
+model_g1 = LinearRegression()
+model_g1.fit(X_train_g1, y_train_g1)
+
+r2_test_g1 = model_g1.score(X_test_g1, y_test_g1)
+print(f"Test R2 without G1: {r2_test:.4f}")
+print(f"Test R2 with G1:    {r2_test_g1:.4f}")
+
+# Using G1 to predict G3 is a form of target leakage in practice:
+# G1 is available only after the first exam has already happened,
+# so it cannot help educators intervene before a student starts failing.
+#
+# Does a high R2 here mean G1 causes G3? No -- correlation is not causation.
+# G1 and G3 are both measures of the same student's math ability at
+# different points in the year. A student who is good at math gets good
+# grades throughout the year. G1 is not making them better; it is just
+# measuring the same underlying trait earlier.
+#
+# Is this useful for identifying students who might struggle? Only partly.
+# By the time G1 is available, the first exam has already happened.
+# To intervene early -- before a student fails -- educators would need
+# features available at enrollment: family background, study habits,
+# prior school history. That is exactly what our full model uses, and why
+# it matters even with a lower R2. A model that can flag at-risk students
+# before any exam is far more actionable than one that waits for G1.
+
+'''
+The model captures meaningful patterns (failures, motivation, background), 
+but most of the variance in student performance remains unexplained, 
+highlighting the complexity of real-world outcomes and the limitations of tabular survey data.
+'''
