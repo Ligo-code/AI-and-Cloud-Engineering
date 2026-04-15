@@ -270,10 +270,77 @@ print(f"Plot saved: {os.path.join(OUTPUT_DIR, 'baseline_failures.png')}")
 # The model collapses each failure count to a single predicted value
 # (it's a line), while actual grades spread widely at each level.
 # This "flattening" reveals how much variance failures alone cannot explain.
-'''
-The model captures the overall negative trend between failures and grades, 
-but it fails to explain the large variation within each group. 
-Students with the same number of failures can have very different outcomes, 
-which shows that additional features are needed for a useful model.
-'''
+
+# =============================================================================
+# Task 5: Full Model
+# =============================================================================
+
+print("\n=== Task 5: Full Model ===")
+
+feature_cols = ["failures", "Medu", "Fedu", "studytime", "higher", "schoolsup",
+                "internet", "sex", "freetime", "activities", "traveltime"]
+
+X = df_clean[feature_cols].values
+y = df_clean["G3"].values
+
+X_train_f, X_test_f, y_train_f, y_test_f = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model_full = LinearRegression()
+model_full.fit(X_train_f, y_train_f)
+
+y_pred_f  = model_full.predict(X_test_f)
+rmse_full = np.sqrt(np.mean((y_pred_f - y_test_f) ** 2))
+r2_train  = model_full.score(X_train_f, y_train_f)
+r2_test   = model_full.score(X_test_f, y_test_f)
+
+print(f"Train R2: {r2_train:.4f}")
+print(f"Test  R2: {r2_test:.4f}")
+print(f"RMSE:     {rmse_full:.4f}")
+print(f"\nBaseline test R2 (failures only): {r2_base:.4f}")
+print(f"Full model test R2:               {r2_test:.4f}")
+
+print("\nCoefficients:")
+for name, coef in zip(feature_cols, model_full.coef_):
+    print(f"  {name:12s}: {coef:+.3f}")
+
+# failures: negative -- more past failures, lower grade (expected)
+# studytime: positive -- more study time -> better grade
+# higher: positive -- aspiration for university correlates with effort
+# internet: positive -- access to resources at home helps
+# sex: positive (M=1) -- small male math advantage in this Portuguese dataset
+# traveltime: negative -- long commutes eat into study time
+
+# schoolsup has the largest negative coefficient (~-2.06), which is likely
+# driven by selection bias: students receiving support are already struggling,
+# so the model associates support with lower performance -- not because
+# support hurts, but because only weaker students receive it.
+
+# activities and freetime have near-zero coefficients, suggesting they
+# contribute little additional explanatory power beyond other features.
+# These could be dropped in a production model without meaningful loss.
+
+# Fedu shows a stronger coefficient than Medu in the multivariate model,
+# even though Medu had a higher simple correlation with G3. This may be
+# due to multicollinearity: Medu and Fedu are correlated with each other,
+# so in the joint model their individual contributions shift. This is a
+# key difference between simple correlation and regression coefficients.
+
+# Train R2 (0.175) vs Test R2 (0.154): the gap is small, meaning the model
+# generalizes reasonably -- it is not memorizing the training data.
+
+# The modest R2 increase (0.09 -> 0.15) suggests that while additional
+# features add signal, a large portion of variance remains unexplained.
+# Student performance depends on factors not captured in this dataset:
+# classroom dynamics, teaching quality, individual motivation, home environment.
+
+# Production decision:
+# Keep: failures, studytime, higher, internet (clear signal, logical direction)
+# Drop: activities, freetime (near-zero, add noise without explanatory power)
+# Keep but interpret carefully: schoolsup (real but biased), sex (social context)
+
+# Overall: the model improves over the baseline but remains limited,
+# highlighting that academic performance is influenced by complex,
+# partially unobserved factors not fully captured in this dataset.
 
