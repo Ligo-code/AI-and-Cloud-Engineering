@@ -48,3 +48,24 @@ print("X_train shape:", X_train.shape)
 print("X_test shape:", X_test.shape)
 print("y_train shape:", y_train.shape)
 print("y_test shape:", y_test.shape)
+
+# Q2: Feature Scaling
+
+# Create a StandardScaler object.
+# StandardScaler transforms each feature so it has mean ~0 and standard deviation ~1.
+scaler = StandardScaler()
+
+# Fit the scaler only on the training data.
+# This prevents data leakage because the test set must remain unseen during training.
+scaler.fit(X_train)
+# The scaler is fit only on X_train to avoid leaking information from the test set into the training process.
+
+# Use the fitted scaler to transform both training and test features.
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Print the mean of each column in the scaled training data.
+# These values should be very close to 0 after standardization.
+print("Column means in X_train_scaled:")
+print(X_train_scaled.mean(axis=0))
+
