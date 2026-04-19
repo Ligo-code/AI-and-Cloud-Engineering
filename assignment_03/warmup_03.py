@@ -167,3 +167,27 @@ plt.show()
 # The confusion matrix shows perfect classification with no misclassifications.
 # All predictions fall on the diagonal, indicating that the model correctly classifies all samples.
 # This suggests that the dataset is well-separated and easy for KNN to model. 
+
+# --- Decision Trees ---
+# Q1: Train Decision Tree
+
+# Create a Decision Tree classifier with limited depth
+dt = DecisionTreeClassifier(max_depth=3, random_state=42)
+
+# Fit the model on unscaled data (scaling not required for trees)
+dt.fit(X_train, y_train)
+
+# Predict on test data
+y_pred_dt = dt.predict(X_test)
+
+# Evaluate performance
+print("\nDecision Tree accuracy:", accuracy_score(y_test, y_pred_dt))
+
+print("\nDecision Tree Classification Report:")
+print(classification_report(y_test, y_pred_dt))
+
+# The Decision Tree achieves slightly lower accuracy compared to KNN.
+# This is likely because the dataset is small and well-separated, where KNN performs very well.
+# However, Decision Trees provide interpretable rules, which can be useful in real-world scenarios.
+
+# Since Decision Trees do not rely on distance calculations, scaling the data does not affect their performance.
