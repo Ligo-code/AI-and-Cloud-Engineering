@@ -69,3 +69,24 @@ X_test_scaled = scaler.transform(X_test)
 print("Column means in X_train_scaled:")
 print(X_train_scaled.mean(axis=0))
 
+# Why do we fit scaler only on training data? 
+# To avoid data leakage. If we fit on the full dataset, the model indirectly learns information from the test set, 
+# which leads to overly optimistic performance.
+
+# --- KNN ---
+# Q1: Train KNN on unscaled data
+
+# Create a KNN classifier with k=5 neighbors
+knn = KNeighborsClassifier(n_neighbors=5)
+
+# Fit the model on the unscaled training data
+knn.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = knn.predict(X_test)
+
+# Evaluate the model
+print("KNN (unscaled data) accuracy:", accuracy_score(y_test, y_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
