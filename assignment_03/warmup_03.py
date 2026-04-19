@@ -106,8 +106,9 @@ y_pred_scaled = knn_scaled.predict(X_test_scaled)
 print("\nKNN (scaled data) accuracy:", accuracy_score(y_test, y_pred_scaled))
 
 # In this case, scaling does not significantly change performance because the Iris dataset
-# is already well-behaved and features are on similar scales. However, in general, KNN
-# benefits from scaling because it relies on distance calculations.
+# is already well-behaved and features are on similar scales. After scaling, distances slightly change, 
+# which can lead to minor performance drops. 
+# However, in general, KNN benefits from scaling because it relies on distance calculations.
 
 # Q3: Cross-validation for KNN (unscaled data)
 
@@ -127,3 +128,21 @@ print("Standard deviation:", cv_scores.std())
 # Cross-validation is more reliable than a single train/test split
 # because it evaluates the model on multiple subsets of the data,
 # reducing the impact of randomness in how the data is split.
+
+# Q4: Hyperparameter tuning for KNN (choose best k)
+
+k_values = [1, 3, 5, 7, 9, 11, 13, 15]
+
+print("\nK values and corresponding mean CV scores:")
+
+for k in k_values:
+    knn_model = KNeighborsClassifier(n_neighbors=k)
+    
+    scores = cross_val_score(knn_model, X_train, y_train, cv=5)
+    
+    print(f"k = {k}, Mean CV Score = {scores.mean():.4f}")
+
+# We select the k value that gives the highest mean cross-validation score,
+# as it is expected to generalize best to unseen data. I had two k values (5 and 7) with the same mean CV score, 
+# so I chose k=5 because it is simpler and less likely to overfit compared to k=7 (k=5 achieves the highest mean cross-validation score.
+# Although k=7 has the same score, we prefer a smaller k to capture more local patterns in the data.)
