@@ -283,3 +283,29 @@ plt.show()
 # although there is some overlap between classes.
 # This indicates that PCA captures meaningful structure,
 # but 2 components are not enough for perfect separation.
+
+# Q3: Explained variance
+
+# Compute cumulative explained variance
+cumulative_variance = np.cumsum(pca.explained_variance_ratio_)
+
+# Plot the cumulative variance
+plt.figure(figsize=(8, 5))
+plt.plot(cumulative_variance)
+
+plt.xlabel("Number of Components")
+plt.ylabel("Cumulative Explained Variance")
+plt.title("PCA Explained Variance")
+
+plt.grid()
+
+plt.savefig("outputs/pca_variance_explained.png")
+plt.show()
+
+# The cumulative explained variance shows how much information is retained
+# as we increase the number of principal components.
+# We typically choose the number of components that explain around 80–90% of the variance.
+
+# Approximately 12–13 components are needed to explain around 80% of the variance.
+# This shows that we can significantly reduce dimensionality from 64 to about 12
+# while retaining most of the information.
