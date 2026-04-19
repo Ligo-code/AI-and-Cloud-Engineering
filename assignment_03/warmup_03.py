@@ -146,3 +146,24 @@ for k in k_values:
 # as it is expected to generalize best to unseen data. I had two k values (5 and 7) with the same mean CV score, 
 # so I chose k=5 because it is simpler and less likely to overfit compared to k=7 (k=5 achieves the highest mean cross-validation score.
 # Although k=7 has the same score, we prefer a smaller k to capture more local patterns in the data.)
+
+# --- Classifier Evaluation ---
+# Q1: Confusion Matrix
+
+# Create confusion matrix using predictions from unscaled KNN
+cm = confusion_matrix(y_test, y_pred)
+
+# Display the confusion matrix
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=iris.target_names)
+disp.plot()
+
+# Save the plot
+plt.savefig("outputs/knn_confusion_matrix.png")
+
+plt.show()
+
+# The confusion matrix shows how often the model correctly or incorrectly classifies each class.
+# In this case, there are likely very few or no misclassifications due to high accuracy.
+# The confusion matrix shows perfect classification with no misclassifications.
+# All predictions fall on the diagonal, indicating that the model correctly classifies all samples.
+# This suggests that the dataset is well-separated and easy for KNN to model.
