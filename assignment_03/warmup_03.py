@@ -166,4 +166,4 @@ plt.show()
 # In this case, there are likely very few or no misclassifications due to high accuracy.
 # The confusion matrix shows perfect classification with no misclassifications.
 # All predictions fall on the diagonal, indicating that the model correctly classifies all samples.
-# This suggests that the dataset is well-separated and easy for KNN to model.
+# This suggests that the dataset is well-separated and easy for KNN to model. 
