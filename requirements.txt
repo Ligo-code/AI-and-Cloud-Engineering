@@ -1,6 +1,6 @@
-numpy
-matplotlib
-scikit-learn
-pandas
-prefect
-seaborn
+numpy==2.4.4
+matplotlib==3.10.8
+scikit-learn==1.8.0
+pandas==3.0.2
+prefect==3.6.25
+seaborn==0.13.2
