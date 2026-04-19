@@ -108,3 +108,22 @@ print("\nKNN (scaled data) accuracy:", accuracy_score(y_test, y_pred_scaled))
 # In this case, scaling does not significantly change performance because the Iris dataset
 # is already well-behaved and features are on similar scales. However, in general, KNN
 # benefits from scaling because it relies on distance calculations.
+
+# Q3: Cross-validation for KNN (unscaled data)
+
+# Create KNN model
+knn_cv = KNeighborsClassifier(n_neighbors=5)
+
+# Perform 5-fold cross-validation on training data
+cv_scores = cross_val_score(knn_cv, X_train, y_train, cv=5)
+
+# Print each fold score
+print("\nCross-validation scores:", cv_scores)
+
+# Print mean and standard deviation
+print("Mean CV score:", cv_scores.mean())
+print("Standard deviation:", cv_scores.std())
+
+# Cross-validation is more reliable than a single train/test split
+# because it evaluates the model on multiple subsets of the data,
+# reducing the impact of randomness in how the data is split.
