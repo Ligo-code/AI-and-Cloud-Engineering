@@ -52,3 +52,30 @@ print(y.value_counts(normalize=True))
 # The dataset is moderately imbalanced.
 # Non-spam emails make up about 60%, while spam emails are about 40%.
 # This means accuracy alone may not be a reliable metric.
+
+# --- Task 2: Train/Test Split and Baseline ---
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+print("\nTrain/Test shapes:")
+print("X_train:", X_train.shape)
+print("X_test:", X_test.shape)
+
+# Baseline model: predict all zeros (non-spam)
+y_pred_baseline = np.zeros_like(y_test)
+
+# Evaluate baseline
+baseline_accuracy = accuracy_score(y_test, y_pred_baseline)
+
+print("\nBaseline Accuracy:", baseline_accuracy)
+
+print("\nBaseline Classification Report:")
+print(classification_report(y_test, y_pred_baseline))
+
+# The baseline model achieves around 58% accuracy by predicting all emails as non-spam. 
+# However, it completely fails to detect spam, which makes it ineffective. 
+# This demonstrates that accuracy alone is not a reliable metric for imbalanced classification problems.
+
