@@ -168,3 +168,53 @@ for k in k_values:
     knn_model = KNeighborsClassifier(n_neighbors=k)
     scores = cross_val_score(knn_model, X_train_scaled, y_train, cv=5)
     print(f"k = {k}, Mean CV Score = {scores.mean():.4f}")
+
+# Scaling had a large impact because KNN relies on distance calculations,
+# and features in this dataset have very different ranges.
+# Without scaling, large-magnitude features dominate the distance.
+# PCA had a smaller effect because the dataset is already fairly informative
+# and does not contain a large amount of redundant or noisy features.
+
+# Decision Tree: compare different max_depth values
+# Decision Trees do not require scaling because they split data using feature thresholds,
+# not distance calculations.
+
+depth_values = [3, 5, 10, None]
+
+print("\nDecision Tree depth comparison:")
+
+for depth in depth_values:
+    tree_model = DecisionTreeClassifier(max_depth=depth, random_state=42)
+    tree_model.fit(X_train, y_train)
+
+    train_accuracy = tree_model.score(X_train, y_train)
+    test_accuracy = tree_model.score(X_test, y_test)
+
+    print(
+        f"max_depth = {depth}, "
+        f"Train Accuracy = {train_accuracy:.4f}, "
+        f"Test Accuracy = {test_accuracy:.4f}"
+    )
+
+# Final Decision Tree model with chosen depth
+
+best_tree = DecisionTreeClassifier(max_depth=10, random_state=42)
+best_tree.fit(X_train, y_train)
+
+y_pred_tree = best_tree.predict(X_test)
+
+print("\nDecision Tree (depth=10) Accuracy:", accuracy_score(y_test, y_pred_tree))
+
+print("\nDecision Tree Classification Report:")
+print(classification_report(y_test, y_pred_tree))
+
+# As max_depth increases, the model becomes more complex.
+# While training accuracy continues to improve, test accuracy peaks at depth=10
+# and then decreases slightly for an unlimited depth.
+# This indicates overfitting at higher depths.
+# Therefore, max_depth=10 provides the best balance between bias and variance.
+
+# Decision Tree performs better than KNN on this dataset.
+# It achieves higher accuracy and better recall for spam detection.
+# This is likely because the dataset contains informative tabular features,
+# and decision trees can effectively capture threshold-based patterns.
