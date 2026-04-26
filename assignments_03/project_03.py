@@ -79,3 +79,21 @@ print(classification_report(y_test, y_pred_baseline))
 # However, it completely fails to detect spam, which makes it ineffective. 
 # This demonstrates that accuracy alone is not a reliable metric for imbalanced classification problems.
 
+# --- Task 3: KNN Classification ---
+
+# Train KNN model
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+
+# Predict
+y_pred_knn = knn.predict(X_test)
+
+# Evaluate
+print("\nKNN Accuracy:", accuracy_score(y_test, y_pred_knn))
+
+print("\nKNN Classification Report:")
+print(classification_report(y_test, y_pred_knn))
+
+# KNN significantly improves performance compared to the baseline.
+# It is able to detect spam emails with a recall of around 71%.
+# However, some spam emails are still missed, indicating room for improvement.
