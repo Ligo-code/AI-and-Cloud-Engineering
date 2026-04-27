@@ -371,3 +371,53 @@ print(best_cm)
 # when the model predicts spam, it should almost always be right — even if
 # that means letting some spam through. The Random Forest achieves this well:
 # ~0.98 precision for spam with a low false-positive rate of only 9 emails.
+
+# --- Task 4: Cross-Validation ---
+
+# A single train/test split can be misleading — the results depend on which
+# emails happened to land in each set. Cross-validation splits the training
+# data into 5 folds, trains on 4 and evaluates on 1 each time, then averages
+# the results. This gives a more reliable estimate of generalization.
+
+print("\n--- Task 4: Cross-Validation (cv=5 on training data) ---\n")
+
+cv_models = [
+    ("KNN (Unscaled)",              KNeighborsClassifier(n_neighbors=5),  X_train,        y_train),
+    ("KNN (Scaled)",                KNeighborsClassifier(n_neighbors=5),  X_train_scaled, y_train),
+    ("KNN (PCA)",                   KNeighborsClassifier(n_neighbors=5),  X_train_pca,    y_train),
+    ("Decision Tree (depth=10)",    DecisionTreeClassifier(max_depth=10, random_state=42), X_train, y_train),
+    ("Random Forest",               RandomForestClassifier(n_estimators=100, random_state=42), X_train, y_train),
+    ("Logistic Regression (Scaled)", LogisticRegression(C=1.0, max_iter=1000, solver="liblinear"), X_train_scaled, y_train),
+    ("Logistic Regression (PCA)",   LogisticRegression(C=1.0, max_iter=1000, solver="liblinear"), X_train_pca,    y_train),
+]
+
+for name, model, X_cv, y_cv in cv_models:
+    scores = cross_val_score(model, X_cv, y_cv, cv=5)
+    print(f"{name}")
+    print(f"  Fold scores: {scores.round(4)}")
+    print(f"  Mean:  {scores.mean():.4f}")
+    print(f"  Std:   {scores.std():.4f}\n")
+
+# Cross-validation summary:
+#
+# Most accurate: Random Forest — highest mean CV score (~0.955), consistent
+# with what the single train/test split showed.
+#
+# Most stable (lowest std): Random Forest and Logistic Regression —
+# both show very low variance across folds. This is expected:
+# Random Forest averages 100 trees internally, which smooths out
+# fold-to-fold fluctuations. Logistic Regression is a stable linear model
+# with no randomness.
+#
+# Decision Tree shows noticeably higher variance than Random Forest —
+# a single tree is sensitive to which examples end up in each fold,
+# while the forest's internal averaging absorbs that instability.
+# This matches the theory described in Task 3.
+#
+# KNN (Unscaled) is both the least accurate and the least stable —
+# confirming that unscaled features produce unreliable distance calculations.
+#
+# The ranking matches the single train/test split results:
+# Random Forest > Decision Tree ≈ Logistic Regression > KNN (Scaled/PCA) > KNN (Unscaled).
+# This agreement across both evaluation methods increases confidence
+# that Random Forest is genuinely the best model for this dataset.
