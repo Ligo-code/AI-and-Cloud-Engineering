@@ -17,6 +17,7 @@ from sklearn.metrics import (
     confusion_matrix,
     ConfusionMatrixDisplay,
 )
+from sklearn.pipeline import Pipeline
 
 print("Project 03 setup completed successfully.")
 
@@ -421,3 +422,58 @@ for name, model, X_cv, y_cv in cv_models:
 # Random Forest > Decision Tree ≈ Logistic Regression > KNN (Scaled/PCA) > KNN (Unscaled).
 # This agreement across both evaluation methods increases confidence
 # that Random Forest is genuinely the best model for this dataset.
+
+# --- Task 5: Building a Prediction Pipeline ---
+
+# Pipeline 1: Random Forest (best tree-based model)
+# Decision trees and random forests do not need scaling — they split on
+# feature thresholds, not distances. So this pipeline has no scaler step.
+rf_pipeline = Pipeline([
+    ("classifier", RandomForestClassifier(n_estimators=100, random_state=42))
+])
+
+rf_pipeline.fit(X_train, y_train)
+y_pred_rf_pipeline = rf_pipeline.predict(X_test)
+
+print("\n--- Task 5: Prediction Pipelines ---\n")
+print("Random Forest Pipeline Accuracy:", rf_pipeline.score(X_test, y_test))
+print("\nRandom Forest Pipeline Classification Report:")
+print(classification_report(y_test, y_pred_rf_pipeline))
+
+# Pipeline 2: Logistic Regression (best non-tree-based model)
+# Logistic Regression depends on feature magnitudes, so scaling is required.
+# PCA did not improve Logistic Regression in Task 3 (scaled: 91.9% > PCA: 91.1%),
+# so we use the full scaled features without a PCA step.
+lr_pipeline = Pipeline([
+    ("scaler",     StandardScaler()),
+    ("classifier", LogisticRegression(C=1.0, max_iter=1000, solver="liblinear"))
+])
+
+lr_pipeline.fit(X_train, y_train)
+y_pred_lr_pipeline = lr_pipeline.predict(X_test)
+
+print("Logistic Regression Pipeline Accuracy:", lr_pipeline.score(X_test, y_test))
+print("\nLogistic Regression Pipeline Classification Report:")
+print(classification_report(y_test, y_pred_lr_pipeline))
+
+# Results match the manual approach from Task 3 exactly — confirming that
+# the pipeline applies the same transformations in the correct order.
+
+# Pipeline structure comparison:
+#
+# Random Forest pipeline:  [classifier]
+# Logistic Regression pipeline: [scaler -> classifier]
+#
+# The two pipelines have different structures because the models have
+# different requirements. Random Forest is scale-invariant — it only
+# asks "is this feature above or below a threshold?", so raw feature
+# values work fine. Logistic Regression learns a weighted sum of features,
+# so a feature with values in the thousands would dominate the others
+# unless everything is brought to the same scale first.
+#
+# Practical value of pipelines:
+# Packaging preprocessing and the model together means there is only one
+# object to fit, save, and deploy. Anyone calling pipeline.predict()
+# gets the correct transformations applied automatically — no risk of
+# forgetting to scale the input or applying steps in the wrong order.
+# This makes handoff and production deployment significantly safer and simpler.
