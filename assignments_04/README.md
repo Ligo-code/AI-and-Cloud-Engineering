@@ -16,7 +16,7 @@ Covers PyTorch fundamentals and basic model inference.
 
 👉 Notebook:  
 https://www.kaggle.com/code/kseniiazakharova/warmup-04
-https://www.kaggle.com/code/kseniiazakharova/project-04
+
 
 ---
 
@@ -47,7 +47,7 @@ Full analysis of CNN models on the Intel Image Classification dataset.
   - Comparing original vs fine-tuned predictions  
 
 👉 Notebook:  
-[Project Notebook](PASTE_YOUR_LINK_HERE)
+https://www.kaggle.com/code/kseniiazakharova/project-04
 
 ---
 
