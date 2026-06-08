@@ -1,9 +1,6 @@
 ## Video Link
 
-
-
-
-
+https://youtu.be/zfXbBVl3CDo 
 
 ## Cost Analysis Summary
 Scenario A used a Standard_B1s virtual machine running 160 hours per month and cost approximately $1.66 per month.
