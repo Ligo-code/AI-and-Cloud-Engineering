@@ -1,4 +1,4 @@
-# Video link: TODO
+# Video link: https://www.youtube.com/watch?v=RuKLGSCGW8s
 
 import json
 from datetime import date
